@@ -28,7 +28,7 @@ public class PlayerMovement : BaseMovement
     {
         base.FixedUpdate();
         
-        if (currentJumpingState != JumpingState.Air) myRb.velocity += Vector3.up * jumpVel;
+        //if (currentJumpingState != JumpingState.Air) velocity += Vector3.up * velocityY;
     }
 
     private void SetState()
@@ -69,7 +69,7 @@ public class PlayerMovement : BaseMovement
         playerAnimation.SetBool(PlayerAnimation.Cond.Walking, false);
 
         currentMovementSpeed = Accelerate(currentMovementSpeed, idle);
-        myRb.velocity = forward * currentMovementSpeed;
+        velocity = forward * currentMovementSpeed;
     }
 
     protected override void Walking()
@@ -77,7 +77,7 @@ public class PlayerMovement : BaseMovement
         playerAnimation.SetBool(PlayerAnimation.Cond.Walking, true);
         
         currentMovementSpeed = Accelerate(currentMovementSpeed, walking);
-        myRb.velocity = forward * currentMovementSpeed;
+        velocity = forward * currentMovementSpeed;
     }
 
     protected override void Running()
@@ -85,7 +85,7 @@ public class PlayerMovement : BaseMovement
         playerAnimation.SetBool(PlayerAnimation.Cond.Walking, false);
 
         currentMovementSpeed = Accelerate(currentMovementSpeed, running);
-        myRb.velocity = forward * currentMovementSpeed;
+        velocity = forward * currentMovementSpeed;
     }
 
     private float Accelerate(float val, MovementTemplate mov)
