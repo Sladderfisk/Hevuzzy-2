@@ -11,7 +11,7 @@ public class BaseMovement : MonoBehaviour
     [Space] 
     [SerializeField] protected JumpTemplate idleJump;
     [SerializeField] protected JumpTemplate runJump;
-    [SerializeField] protected float fallSpeed;
+    [SerializeField] protected MovementTemplate fallSpeed;
     [Space] 
     [SerializeField] protected float rotationSpeed;
     [Space]
@@ -26,8 +26,11 @@ public class BaseMovement : MonoBehaviour
     protected RaycastHit groundHitInfo;
     protected bool hitGround;
     protected Vector3 forward;
+    
+    protected float velocityY;
+    protected Vector3 velocity;
 
-    protected float jumpVel;
+    private float startJumpHeight;
     
     protected MovementState currentMovementState;
     protected JumpingState currentJumpingState = JumpingState.Air;
@@ -64,6 +67,8 @@ public class BaseMovement : MonoBehaviour
         if (hitGround) Debug.DrawRay(groundHitInfo.point, groundHitInfo.normal * 10);
         if (hitGround) forward = Vector3.Cross(groundHitInfo.normal, transform.right) * -1;
         else forward = transform.forward;
+
+        myRb.velocity = new(velocity.x, velocity.y + velocityY, velocity.z);
     }
 
     protected virtual void GroundCheck()
@@ -74,8 +79,9 @@ public class BaseMovement : MonoBehaviour
         
         hitGround = hits.Length > 0;
         if (!hitGround) return;
-        
-        groundHitInfo = Physics.RaycastAll(transform.position, Vector3.down, Mathf.Infinity, groundLayer)[0];
+
+        startJumpHeight = transform.position.y;
+        groundHitInfo = Physics.RaycastAll(transform.position + Vector3.up, Vector3.down, Mathf.Infinity, groundLayer)[0];
     }
 
     protected virtual void Move()
@@ -103,18 +109,18 @@ public class BaseMovement : MonoBehaviour
     
     protected virtual void Idle()
     {
-        myRb.velocity = transform.forward * idle.speed;
+        velocity = transform.forward * idle.speed;
     }
     
     protected virtual void Walking()
     {
         
-        myRb.velocity = transform.forward * walking.speed;
+        velocity = transform.forward * walking.speed;
     }
 
     protected virtual void Running()
     {
-        myRb.velocity = transform.forward * running.speed;
+        velocity = transform.forward * running.speed;
     }
 
     protected virtual void Jump()
@@ -128,7 +134,7 @@ public class BaseMovement : MonoBehaviour
                 break;
             
             case JumpingState.IdleJump:
-                Debug.Log("OvO");
+                //Debug.Log("OvO");
                 IdleJump();
                 break;
 
@@ -137,35 +143,33 @@ public class BaseMovement : MonoBehaviour
                 break;
             
             default:
-                jumpVel = 0;
+                velocityY = 0;
                 break;
         }
     }
 
     protected virtual void Falling()
     {
-        myRb.velocity -= Vector3.down * fallSpeed;
+        velocityY = Mathf.Lerp(velocityY, -fallSpeed.speed, Time.fixedDeltaTime / fallSpeed.accelerationSpeed);
+        
         if (hitGround) currentJumpingState = JumpingState.Grounded;
     }
 
     protected virtual void IdleJump()
     {
-        if (jumpVel > idleJump.jumpHeight - 0.1f)
-        {
-            Debug.Log("OVO");
-            jumpVel = Mathf.Lerp(jumpVel, idleJump.jumpHeight, Time.fixedDeltaTime / idleJump.jumpSpeed);
-        }
-        else
-        {
-            currentJumpingState = JumpingState.Air;
-        }
+        Jump(idleJump);
     }
 
     protected virtual void RunJump()
     {
-        if (jumpVel > runJump.jumpHeight - 0.1f)
+        Jump(runJump);
+    }
+
+    private void Jump(JumpTemplate a)
+    {
+        if (a.jumpHeight > transform.position.y - startJumpHeight)
         {
-            jumpVel = Mathf.Lerp(jumpVel, runJump.jumpHeight, Time.fixedDeltaTime / runJump.jumpSpeed);
+            velocityY = Mathf.Lerp(a.jumpSpeed, 0.5f, (transform.position.y - startJumpHeight) / a.jumpHeight);
         }
         else
         {
