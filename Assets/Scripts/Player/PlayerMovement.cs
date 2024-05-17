@@ -12,7 +12,7 @@ public class PlayerMovement : BaseMovement
     private Vector3 targetDirection;
     private float currentMovementSpeed;
     
-    private void Update()
+    protected override void FrameTick()
     {
         inputDirection = new(
             Input.GetAxisRaw("Horizontal"),
@@ -22,13 +22,6 @@ public class PlayerMovement : BaseMovement
         inputDirection = inputDirection.normalized;
 
         SetState();
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-        
-        //if (currentJumpingState != JumpingState.Air) velocity += Vector3.up * velocityY;
     }
 
     private void SetState()
@@ -67,6 +60,7 @@ public class PlayerMovement : BaseMovement
     protected override void Idle()
     {
         playerAnimation.SetBool(PlayerAnimation.Cond.Walking, false);
+        playerAnimation.SetBool(PlayerAnimation.Cond.Running, false);
 
         currentMovementSpeed = Accelerate(currentMovementSpeed, idle);
         velocity = forward * currentMovementSpeed;
@@ -75,6 +69,7 @@ public class PlayerMovement : BaseMovement
     protected override void Walking()
     {
         playerAnimation.SetBool(PlayerAnimation.Cond.Walking, true);
+        playerAnimation.SetBool(PlayerAnimation.Cond.Running, false);
         
         currentMovementSpeed = Accelerate(currentMovementSpeed, walking);
         velocity = forward * currentMovementSpeed;
@@ -82,7 +77,7 @@ public class PlayerMovement : BaseMovement
 
     protected override void Running()
     {
-        playerAnimation.SetBool(PlayerAnimation.Cond.Walking, false);
+        playerAnimation.SetBool(PlayerAnimation.Cond.Running, true);
 
         currentMovementSpeed = Accelerate(currentMovementSpeed, running);
         velocity = forward * currentMovementSpeed;

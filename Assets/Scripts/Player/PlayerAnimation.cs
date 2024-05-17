@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : PauseInGame
 {
     private Animator anim;
 
@@ -20,5 +20,6 @@ public class PlayerAnimation : MonoBehaviour
     public enum Cond
     {
         Walking,
+        Running
     }
 }

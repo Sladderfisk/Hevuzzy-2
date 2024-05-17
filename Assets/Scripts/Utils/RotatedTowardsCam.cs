@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RotatedTowardsCam : MonoBehaviour
+public class RotatedTowardsCam : PauseInGame
 {
-    private void Update()
+    protected override void FrameTick()
     {
         transform.LookAt(Camera.main.transform.position);
     }

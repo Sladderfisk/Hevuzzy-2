@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseMovement : MonoBehaviour
+public class BaseMovement : PauseInGame
 {
     [SerializeField] protected MovementTemplate idle; 
     [SerializeField] protected MovementTemplate walking; 
@@ -57,7 +57,7 @@ public class BaseMovement : MonoBehaviour
         if (mCamera == null) mCamera = Camera.main;
     }
 
-    protected virtual void FixedUpdate()
+    protected override void PhysTick()
     {
         GroundCheck();
         Move();
