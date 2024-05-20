@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimation : PauseInGame
+public class PlayerAnimation : CanPause
 {
     private Animator anim;
 
@@ -12,14 +12,22 @@ public class PlayerAnimation : PauseInGame
         anim = GetComponentInChildren<Animator>();
     }
 
-    public void SetBool(Cond cond, bool val)
+    public void SetTrigger(States states)
     {
-        anim.SetBool(cond.ToString(), val);
+        anim.SetTrigger(states.ToString());
+    }
+
+    public void SetBool(States states, bool val)
+    {
+        anim.SetBool(states.ToString(), val);
     }
     
-    public enum Cond
+    public enum States
     {
         Walking,
-        Running
+        Running,
+        Idle,
+        Jumping,
+        Falling
     }
 }

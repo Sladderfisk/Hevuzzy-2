@@ -2,42 +2,74 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponBase : PauseInGame
+public class WeaponBase : CanPause
 {
-    [SerializeField] protected BaseWeaponScriptableObject wep;
+	[SerializeField] protected BaseWeaponScriptableObject wep;
 
-    protected BaseCombat myCombat;
+	protected BaseCombat myCombat;
 
-    private float timeSinceLastHit = 999.0f;
+	protected float timeSinceLastAttack = 999.0f;
 
-    public virtual bool Fire()
-    {
-        if (!CanFire()) return false;
-        
-        return true;
-    }
+	public void SetMyCombat(BaseCombat newCombat)
+	{
+		myCombat = newCombat;
+	}
+	
 
-    protected bool CanFire()
-    {
-        bool val = timeSinceLastHit > wep.timeBetweenAttacks;
-        if (val) timeSinceLastHit = 0;
-        return val;
-    }
+	public virtual bool Fire()
+	{
+		if (!CanFire()) return false;
+		
+		return true;
+	}
 
-    protected void SendDamageInfo(BaseDamageable hit)
-    {
-        HitInfo hitInfo = new HitInfo()
-        {
-            damage = wep.damage,
-            shooter = myCombat,
-            weapon = this
-        };
-        
-        hit.TakeHit(hitInfo);
-    }
+	protected bool CanFire()
+	{
+		bool val = timeSinceLastAttack > wep.timeBetweenAttacks;
+		if (val) timeSinceLastAttack = 0;
+		return val;
+	}
 
-    protected override void FrameTick()
-    {
-        timeSinceLastHit += Time.deltaTime;
-    }
+	protected void SendDamageInfo(BaseDamageable hit)
+	{
+		HitInfo hitInfo = new HitInfo()
+		{
+			damage = wep.damage,
+			shooter = myCombat,
+			weapon = this
+		};
+		
+		hit.TakeHit(hitInfo);
+	}
+	
+	protected override void FrameTick()
+	{
+		timeSinceLastAttack += Time.deltaTime;
+	}
+
+	protected List<BaseDamageable> SearchForDamageable(RaycastHit[] hits)
+	{
+		List<GameObject> gameObjects = new List<GameObject>();
+		foreach (var hit in hits)
+		{
+			gameObjects.Add(hit.collider.gameObject);
+		}
+
+		return SearchForDamageable(gameObjects.ToArray());
+	}
+
+	protected List<BaseDamageable> SearchForDamageable(GameObject[] hits)
+	{
+		var correctHits = new List<BaseDamageable>();
+		
+		foreach (var hit in hits)
+		{
+			bool containsKey = BaseDamageable.AllDamageable.ContainsKey(hit);
+			if (!containsKey) continue;
+			
+			correctHits.Add(BaseDamageable.AllDamageable[hit]);
+		}
+		
+		return correctHits;
+	}
 }

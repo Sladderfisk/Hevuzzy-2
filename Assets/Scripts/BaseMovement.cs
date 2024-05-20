@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseMovement : PauseInGame
+public class BaseMovement : CanPause
 {
     [SerializeField] protected MovementTemplate idle; 
     [SerializeField] protected MovementTemplate walking; 
@@ -134,7 +134,6 @@ public class BaseMovement : PauseInGame
                 break;
             
             case JumpingState.IdleJump:
-                //Debug.Log("OvO");
                 IdleJump();
                 break;
 
@@ -167,9 +166,9 @@ public class BaseMovement : PauseInGame
 
     private void Jump(JumpTemplate a)
     {
-        if (a.jumpHeight > transform.position.y - startJumpHeight)
+        if (a.jumpHeight - a.jumpHeight / 5 > transform.position.y - startJumpHeight)
         {
-            velocityY = Mathf.Lerp(a.jumpSpeed, 0.5f, (transform.position.y - startJumpHeight) / a.jumpHeight);
+            velocityY = Mathf.Lerp(a.jumpSpeed, 1f, (transform.position.y - startJumpHeight) / a.jumpHeight);
         }
         else
         {

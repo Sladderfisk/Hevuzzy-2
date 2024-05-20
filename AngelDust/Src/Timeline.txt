@@ -1,3 +1,6 @@
 Walking 0 - 110
 Idle 200 - 300
 Running 320 - 380
+Jump Start 400 - 430
+Jump Air 430 - 465
+Falling 480 - 570

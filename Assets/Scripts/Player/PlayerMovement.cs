@@ -22,6 +22,48 @@ public class PlayerMovement : BaseMovement
         inputDirection = inputDirection.normalized;
 
         SetState();
+        PlayAnimation();
+    }
+
+    private void PlayAnimation()
+    {
+        switch (CurrentJumpingState)
+        {
+            case JumpingState.IdleJump:
+                playerAnimation.SetBool(PlayerAnimation.States.Jumping, true);
+                break;
+            
+            case JumpingState.RunJump:
+                playerAnimation.SetBool(PlayerAnimation.States.Jumping, true);
+                break;
+            
+            case JumpingState.Air:
+                playerAnimation.SetBool(PlayerAnimation.States.Jumping, false);
+                playerAnimation.SetBool(PlayerAnimation.States.Falling, true);
+                break;
+            
+            case JumpingState.Grounded:
+                
+                playerAnimation.SetBool(PlayerAnimation.States.Falling, false);
+                playerAnimation.SetBool(PlayerAnimation.States.Jumping, false);
+                switch (CurrentMovementState)
+                {
+                    case MovementState.Idle:
+                        playerAnimation.SetBool(PlayerAnimation.States.Running, false);
+                        playerAnimation.SetBool(PlayerAnimation.States.Walking, false);
+                        break;
+                    
+                    case MovementState.Walking:
+                        playerAnimation.SetBool(PlayerAnimation.States.Running, false);
+                        playerAnimation.SetBool(PlayerAnimation.States.Walking, true);
+                        break;
+                    
+                    case MovementState.Running:
+                        playerAnimation.SetBool(PlayerAnimation.States.Running, true);
+                        break;
+                }
+                break;
+        }
     }
 
     private void SetState()
@@ -59,26 +101,18 @@ public class PlayerMovement : BaseMovement
 
     protected override void Idle()
     {
-        playerAnimation.SetBool(PlayerAnimation.Cond.Walking, false);
-        playerAnimation.SetBool(PlayerAnimation.Cond.Running, false);
-
         currentMovementSpeed = Accelerate(currentMovementSpeed, idle);
         velocity = forward * currentMovementSpeed;
     }
 
     protected override void Walking()
     {
-        playerAnimation.SetBool(PlayerAnimation.Cond.Walking, true);
-        playerAnimation.SetBool(PlayerAnimation.Cond.Running, false);
-        
         currentMovementSpeed = Accelerate(currentMovementSpeed, walking);
         velocity = forward * currentMovementSpeed;
     }
 
     protected override void Running()
     {
-        playerAnimation.SetBool(PlayerAnimation.Cond.Running, true);
-
         currentMovementSpeed = Accelerate(currentMovementSpeed, running);
         velocity = forward * currentMovementSpeed;
     }

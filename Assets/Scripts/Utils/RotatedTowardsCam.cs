@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RotatedTowardsCam : PauseInGame
+public class RotatedTowardsCam : CanPause
 {
     protected override void FrameTick()
     {
