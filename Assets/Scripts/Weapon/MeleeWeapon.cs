@@ -14,6 +14,7 @@ public class MeleeWeapon : WeaponBase
     private MeleeWeaponScriptableObject.Combo currentCombo;
 
     private bool isAttacking;
+    private int currentComboIndex;
 
     private void Awake()
     {
@@ -23,8 +24,12 @@ public class MeleeWeapon : WeaponBase
     protected override void FrameTick()
     {
         base.FrameTick();
-        
-        if (timeSinceLastAttack > timeToDeactivate) myAnimator.SetBool(States.Active.ToString(), false);
+
+        if (timeSinceLastAttack > timeToDeactivate)
+        {
+            currentComboIndex = 0;
+            myAnimator.SetBool(States.Active.ToString(), false);
+        }
     }
 
     public override bool Fire()
@@ -32,8 +37,12 @@ public class MeleeWeapon : WeaponBase
         if (!base.Fire()) return false;
         if (isAttacking) return false;
         
-        currentCombo = melWep.combos[0];
-        myAnimator.SetTrigger(currentCombo.ani.name);
+        currentCombo = melWep.combos[currentComboIndex];
+        
+        currentComboIndex++;
+        if (currentComboIndex >= melWep.combos.Length) currentComboIndex = 0;
+
+            myAnimator.SetTrigger(currentCombo.ani.name);
         StartCoroutine(Swing());
         
         return true;
@@ -73,13 +82,8 @@ public class MeleeWeapon : WeaponBase
             foreach (var hit in damageableHits)
             {
                 if (objectsHit.Contains(hit)) continue;
-                hit.TakeHit(new HitInfo()
-                {
-                    damage = currentCombo.damage,
-                    shooter = myCombat,
-                    weapon = this
-                });
-                objectsHit.Add(hit);
+                
+                SendDamageInfo(hit);
             }
         }
     }

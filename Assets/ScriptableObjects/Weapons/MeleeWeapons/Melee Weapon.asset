@@ -15,3 +15,5 @@ MonoBehaviour:
   damage: 0
   timeBetweenAttacks: 0
   canHoldDown: 0
+  canCharge: 0
+  combos: []

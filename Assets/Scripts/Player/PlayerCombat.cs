@@ -8,6 +8,10 @@ public class PlayerCombat : BaseCombat
     {
         base.FrameTick();
 
-        if (Input.GetMouseButton(0)) Attack();
+        if (CurrentWeapon.Weapon.canHoldDown)
+        {
+            if (Input.GetMouseButton(0)) CurrentWeapon.Fire();
+        }
+        else if (Input.GetMouseButtonDown(0)) CurrentWeapon.Fire();
     }
 }

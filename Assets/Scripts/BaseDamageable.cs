@@ -6,6 +6,11 @@ using UnityEngine;
 public abstract class BaseDamageable : CanPause
 {
     [SerializeField] private int health;
+    [SerializeField] private bool invincible;
+
+    protected int currentHealth;
+
+    public int CurrentHealth => currentHealth;
 
     public static Dictionary<GameObject, BaseDamageable> AllDamageable { get; private set; }
 
@@ -22,7 +27,14 @@ public abstract class BaseDamageable : CanPause
 
     public virtual void TakeHit(HitInfo hitInfo)
     {
+        currentHealth -= hitInfo.damage;
         
+        if (currentHealth < 1) Die();
+    }
+
+    protected virtual void Die()
+    {
+        Destroy(gameObject);
     }
 }
 

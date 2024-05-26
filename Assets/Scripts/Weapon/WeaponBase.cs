@@ -10,6 +10,8 @@ public class WeaponBase : CanPause
 
 	protected float timeSinceLastAttack = 999.0f;
 
+	public BaseWeaponScriptableObject Weapon => wep;
+
 	public void SetMyCombat(BaseCombat newCombat)
 	{
 		myCombat = newCombat;
