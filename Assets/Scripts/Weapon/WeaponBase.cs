@@ -66,10 +66,10 @@ public class WeaponBase : CanPause
 		
 		foreach (var hit in hits)
 		{
-			bool containsKey = BaseDamageable.AllDamageable.ContainsKey(hit);
+			bool containsKey = BaseDamageable.AllDamageable.ContainsKey(hit.GetInstanceID());
 			if (!containsKey) continue;
 			
-			correctHits.Add(BaseDamageable.AllDamageable[hit]);
+			correctHits.Add(BaseDamageable.AllDamageable[hit.GetInstanceID()]);
 		}
 		
 		return correctHits;

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -846,7 +846,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126859877}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.04740787, y: 0.9465603, z: -0.16398337, w: 0.2736522}
+  m_LocalRotation: {x: 0.047407873, y: 0.9465603, z: -0.16398339, w: 0.27365217}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1317,6 +1317,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &377864688 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 858249127146673048, guid: 2221526271abb04478a560ae98a8911e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1070602434}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a638643aee12b14999b21b94e6d503f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1656,6 +1668,7 @@ GameObject:
   - component: {fileID: 604009993}
   - component: {fileID: 604009995}
   - component: {fileID: 604009994}
+  - component: {fileID: 604009996}
   m_Layer: 0
   m_Name: HitDummy
   m_TagString: Untagged
@@ -1699,7 +1712,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &604009995
@@ -1726,9 +1739,24 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 122
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
+--- !u!114 &604009996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604009992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59af6d66bf5074b4f922076a731cc9ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  invincible: 0
+  worldSpaceText: {fileID: 377864688}
 --- !u!1 &760057965
 GameObject:
   m_ObjectHideFlags: 3
@@ -3555,7 +3583,6 @@ GameObject:
   - component: {fileID: 1823652247}
   - component: {fileID: 1823652250}
   - component: {fileID: 1823652249}
-  - component: {fileID: 1823652248}
   m_Layer: 0
   m_Name: HitDummyVisuals
   m_TagString: Untagged
@@ -3578,29 +3605,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 604009993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &1823652248
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1823652246}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1823652249
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3840,7 +3844,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  invincible: 0
+  invincible: 1
 --- !u!1001 &3298636945047512550
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3854,6 +3858,11 @@ PrefabInstance:
       propertyPath: myAnimator
       value: 
       objectReference: {fileID: 900501095}
+    - target: {fileID: 2052452261687525185, guid: 25cbbee67ab64964b887d12d27e52a1c,
+        type: 3}
+      propertyPath: layerMask.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 2052452261687525185, guid: 25cbbee67ab64964b887d12d27e52a1c,
         type: 3}
       propertyPath: timeToDeactivate

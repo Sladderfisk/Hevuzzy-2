@@ -19,16 +19,22 @@ public class CanPause : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// A version of Update that can't be paused.
+    /// </summary>
     protected virtual void IgnorePause()
     {
         
     }
     
+    /// <summary>
+    /// A version of Update that can be paused.
+    /// </summary>
     protected virtual void FrameTick()
     {
         
     }
-
+    
     private void FixedUpdate()
     {
         switch (currentGameState)
@@ -39,6 +45,9 @@ public class CanPause : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// A version of FixedUpdate that can be paused.
+    /// </summary>
     protected virtual void PhysTick()
     {
         

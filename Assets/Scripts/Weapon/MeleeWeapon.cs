@@ -9,6 +9,7 @@ public class MeleeWeapon : WeaponBase
     [SerializeField] BoxCollider[] damageColliders;
     [SerializeField] private Animator myAnimator;
     [SerializeField] private float timeToDeactivate;
+    [SerializeField] private LayerMask layerMask;
     
     private MeleeWeaponScriptableObject melWep;
     private MeleeWeaponScriptableObject.Combo currentCombo;
@@ -56,8 +57,8 @@ public class MeleeWeapon : WeaponBase
         var objectsHit = new List<BaseDamageable>();
         
         // An easy way to not damage itself.
-        if (BaseDamageable.AllDamageable.ContainsKey(myCombat.gameObject)) 
-            objectsHit.Add(BaseDamageable.AllDamageable[myCombat.gameObject]);
+        if (BaseDamageable.AllDamageable.ContainsKey(myCombat.gameObject.GetInstanceID())) 
+            objectsHit.Add(BaseDamageable.AllDamageable[myCombat.gameObject.GetInstanceID()]);
 
         while (dur < currentCombo.ani.length)
         {
@@ -75,9 +76,18 @@ public class MeleeWeapon : WeaponBase
     {
         foreach (var col in damageColliders)
         {
-            var hits = Physics.BoxCastAll(col.center, col.size, Vector3.up, col.transform.rotation);
+            //Collider[] hits = new Collider[] {};
+            var hits = Physics.OverlapBox(col.transform.position + col.center, col.size / 2f, col.transform.rotation, layerMask.value, QueryTriggerInteraction.Collide);
+            var hitCount = hits.Length;
 
-            var damageableHits = SearchForDamageable(hits);
+            var objs = new GameObject[hitCount];
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                objs[i] = hits[i].gameObject;
+            } 
+
+            var damageableHits = SearchForDamageable(objs);
 
             foreach (var hit in damageableHits)
             {

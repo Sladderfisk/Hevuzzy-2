@@ -12,23 +12,22 @@ public abstract class BaseDamageable : CanPause
 
     public int CurrentHealth => currentHealth;
 
-    public static Dictionary<GameObject, BaseDamageable> AllDamageable { get; private set; }
+    public static Dictionary<int, BaseDamageable> AllDamageable { get; private set; }
 
     private void Awake()
     {
-        if (AllDamageable == null) AllDamageable = new Dictionary<GameObject, BaseDamageable>();
-        AllDamageable.Add(gameObject, this);
+        if (AllDamageable == null) AllDamageable = new Dictionary<int, BaseDamageable>();
+        AllDamageable.Add(gameObject.GetInstanceID(), this);
     }
 
     private void OnDisable()
     {
-        AllDamageable.Remove(gameObject);
+        AllDamageable.Remove(gameObject.GetInstanceID());
     }
 
     public virtual void TakeHit(HitInfo hitInfo)
     {
-        currentHealth -= hitInfo.damage;
-        
+        if (!invincible) currentHealth -= hitInfo.damage;
         if (currentHealth < 1) Die();
     }
 
