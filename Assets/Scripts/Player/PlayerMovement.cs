@@ -11,6 +11,14 @@ public class PlayerMovement : BaseMovement
     private Vector3 inputDirection;
     private Vector3 targetDirection;
     private float currentMovementSpeed;
+
+    public void LookAt(Vector3 dir)
+    {
+        dir = Vector3.Scale(dir, new(1, 0, 1));
+        targetDirection = dir;
+        transform.rotation = Quaternion.LookRotation(dir) * new Quaternion(0, 1, 0, 1);
+        transform.eulerAngles -= new Vector3(0.0f, 90.0f, 0.0f);
+    }
     
     protected override void FrameTick()
     {

@@ -6,13 +6,13 @@ using UnityEngine;
 
 public class MeleeWeapon : WeaponBase
 {
-    [SerializeField] BoxCollider[] damageColliders;
+    [SerializeField] private Collider[] damageColliders;
     [SerializeField] private Animator myAnimator;
-    [SerializeField] private float timeToDeactivate;
-    [SerializeField] private LayerMask layerMask;
-    
+
     private MeleeWeaponScriptableObject melWep;
     private MeleeWeaponScriptableObject.Combo currentCombo;
+
+    private List<TriggerMessage> damageCollidersInfo;
 
     private bool isAttacking;
     private int currentComboIndex;
@@ -20,6 +20,12 @@ public class MeleeWeapon : WeaponBase
     private void Awake()
     {
         melWep = (MeleeWeaponScriptableObject)wep;
+
+        damageCollidersInfo = new List<TriggerMessage>();
+        foreach (var collider in damageColliders)
+        {
+            damageCollidersInfo.Add(collider.gameObject.AddComponent<TriggerMessage>());
+        }
     }
 
     protected override void FrameTick()
@@ -38,12 +44,13 @@ public class MeleeWeapon : WeaponBase
         if (!base.Fire()) return false;
         if (isAttacking) return false;
         
+        myAnimator.SetBool(States.Active.ToString(), true);
         currentCombo = melWep.combos[currentComboIndex];
         
         currentComboIndex++;
         if (currentComboIndex >= melWep.combos.Length) currentComboIndex = 0;
 
-            myAnimator.SetTrigger(currentCombo.ani.name);
+        myAnimator.SetTrigger(currentCombo.ani.name);
         StartCoroutine(Swing());
         
         return true;
@@ -52,7 +59,6 @@ public class MeleeWeapon : WeaponBase
     private IEnumerator Swing()
     {
         isAttacking = true;
-        
         var dur = 0.0f;
         var objectsHit = new List<BaseDamageable>();
         
@@ -60,10 +66,10 @@ public class MeleeWeapon : WeaponBase
         if (BaseDamageable.AllDamageable.ContainsKey(myCombat.gameObject.GetInstanceID())) 
             objectsHit.Add(BaseDamageable.AllDamageable[myCombat.gameObject.GetInstanceID()]);
 
-        while (dur < currentCombo.ani.length)
+        while (dur < currentCombo.attackLenght)
         {
-            dur += Time.fixedTime;
-            Damage(objectsHit);
+            dur += Time.fixedDeltaTime;
+            Damage(objectsHit, currentCombo);
 
             yield return new WaitForFixedUpdate();
         }
@@ -72,28 +78,26 @@ public class MeleeWeapon : WeaponBase
         isAttacking = false;
     }
 
-    private void Damage(List<BaseDamageable> objectsHit)
+    private void Damage(List<BaseDamageable> objectsHit, MeleeWeaponScriptableObject.Combo combo)
     {
         foreach (var col in damageColliders)
         {
             //Collider[] hits = new Collider[] {};
-            var hits = Physics.OverlapBox(col.transform.position + col.center, col.size / 2f, col.transform.rotation, layerMask.value, QueryTriggerInteraction.Collide);
-            var hitCount = hits.Length;
-
-            var objs = new GameObject[hitCount];
-
-            for (int i = 0; i < hitCount; i++)
+            var hits = new List<Collider>();
+            foreach (var info in damageCollidersInfo)
             {
-                objs[i] = hits[i].gameObject;
-            } 
+                hits.AddRange(info.CollidersInMe);
+            }
+            var hitCount = hits.Count;
 
-            var damageableHits = SearchForDamageable(objs);
+            var damageableHits = SearchForDamageable(hits);
 
             foreach (var hit in damageableHits)
             {
                 if (objectsHit.Contains(hit)) continue;
                 
-                SendDamageInfo(hit);
+                SendDamageInfo(hit, combo.damage);
+                objectsHit.Add(hit);
             }
         }
     }
@@ -101,5 +105,6 @@ public class MeleeWeapon : WeaponBase
     private enum States
     {
         Active,
+        Inactive
     }
 }

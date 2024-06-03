@@ -19,5 +19,7 @@ MonoBehaviour:
   combos:
   - damage: 25
     ani: {fileID: 7400000, guid: 38b75eeafdd8e4d4ba6d94e830790794, type: 2}
+    attackLenght: 0.3
   - damage: 30
     ani: {fileID: 7400000, guid: ae9b51e2b68a9474a8d1fa28be559829, type: 2}
+    attackLenght: 0.3

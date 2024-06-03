@@ -16,6 +16,8 @@ public abstract class BaseDamageable : CanPause
 
     private void Awake()
     {
+        currentHealth = health;
+        
         if (AllDamageable == null) AllDamageable = new Dictionary<int, BaseDamageable>();
         AllDamageable.Add(gameObject.GetInstanceID(), this);
     }

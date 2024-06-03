@@ -52,6 +52,11 @@ public class CanPause : MonoBehaviour
     {
         
     }
+
+    protected virtual void Destroy(GameObject obj)
+    {
+        obj.SetActive(false);
+    }
 }
 
 public enum GameState

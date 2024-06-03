@@ -13,5 +13,6 @@ public class MeleeWeaponScriptableObject : BaseWeaponScriptableObject
     {
         public int damage;
         public AnimationClip ani;
+        public float attackLenght;
     }
 }

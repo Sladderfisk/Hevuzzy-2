@@ -5,10 +5,12 @@ using UnityEngine;
 public class WeaponBase : CanPause
 {
 	[SerializeField] protected BaseWeaponScriptableObject wep;
+	[SerializeField] protected float timeToDeactivate;
 
 	protected BaseCombat myCombat;
 
 	protected float timeSinceLastAttack = 999.0f;
+	protected bool active;
 
 	public BaseWeaponScriptableObject Weapon => wep;
 
@@ -32,11 +34,11 @@ public class WeaponBase : CanPause
 		return val;
 	}
 
-	protected void SendDamageInfo(BaseDamageable hit)
+	protected virtual void SendDamageInfo(BaseDamageable hit, int damage)
 	{
 		HitInfo hitInfo = new HitInfo()
 		{
-			damage = wep.damage,
+			damage = damage,
 			shooter = myCombat,
 			weapon = this
 		};
@@ -47,14 +49,16 @@ public class WeaponBase : CanPause
 	protected override void FrameTick()
 	{
 		timeSinceLastAttack += Time.deltaTime;
+
+		active = timeToDeactivate > timeSinceLastAttack;
 	}
 
-	protected List<BaseDamageable> SearchForDamageable(RaycastHit[] hits)
+	protected List<BaseDamageable> SearchForDamageable(List<Collider> hits)
 	{
 		List<GameObject> gameObjects = new List<GameObject>();
 		foreach (var hit in hits)
 		{
-			gameObjects.Add(hit.collider.gameObject);
+			gameObjects.Add(hit.gameObject);
 		}
 
 		return SearchForDamageable(gameObjects.ToArray());
@@ -73,5 +77,15 @@ public class WeaponBase : CanPause
 		}
 		
 		return correctHits;
+	}
+
+	protected BaseDamageable SearchForDamageable(GameObject hit, out bool found)
+	{
+		found = false;
+		bool containsKey = BaseDamageable.AllDamageable.ContainsKey(hit.GetInstanceID());
+		if (!containsKey) return null;
+
+		found = true;
+		return BaseDamageable.AllDamageable[hit.GetInstanceID()];
 	}
 }
