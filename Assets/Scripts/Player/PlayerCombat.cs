@@ -24,14 +24,16 @@ public class PlayerCombat : BaseCombat
             if (Input.GetMouseButton(0)) Attack();
         }
         else if (Input.GetMouseButtonDown(0)) Attack();
+        
+        if (!CurrentWeapon.Active) movement.DisableCombat();
+        else movement.SetCombat(Camera.main.transform.forward);
+
     }
 
     protected override bool Attack()
     {
         if (!base.Attack()) return false;
 
-        movement.LookAt(Camera.main.transform.forward + transform.position);
-        
         return true;
     }
 

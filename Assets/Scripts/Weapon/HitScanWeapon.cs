@@ -7,6 +7,7 @@ public class HitScanWeapon : WeaponBase
 {
     [SerializeField] private Transform firePoint;
     [SerializeField] private Animator animator;
+    [SerializeField] private VFX vfx;
     
     private HitScanWeaponScriptableObject hitWep;
     
@@ -22,6 +23,7 @@ public class HitScanWeapon : WeaponBase
         base.FrameTick();
         fireDir = myCombat.GetFireDirection();
         animator.SetBool(Cases.Shooting.ToString(), active);
+        if (!active) vfx.Stop();
     }
 
     public override bool Fire()
@@ -29,6 +31,7 @@ public class HitScanWeapon : WeaponBase
         if (!base.Fire()) return false;
 
         HitScan();
+        vfx.Play();
         
         return true;
     }

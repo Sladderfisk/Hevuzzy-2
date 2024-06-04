@@ -34,6 +34,7 @@ public class BaseMovement : CanPause
     
     protected MovementState currentMovementState;
     protected JumpingState currentJumpingState = JumpingState.Air;
+    protected CombatState currentCombatState = CombatState.Passive;
     
     public MovementState CurrentMovementState
     {
@@ -183,6 +184,12 @@ public class BaseMovement : CanPause
         //pos -= new Vector3(0.0f, groundCheckLenght, 0.0f);
         Gizmos.DrawWireCube(transform.position + Vector3.down * groundCheckLenght,
             new(groundCheckRadius, groundCheckRadius, groundCheckRadius));
+    }
+
+    public enum CombatState
+    {
+        Passive,
+        Combat
     }
 
     public enum MovementState

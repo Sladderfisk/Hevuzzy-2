@@ -6,18 +6,24 @@ using UnityEngine;
 
 public class PlayerMovement : BaseMovement
 {
+    [SerializeField] private float combatRotationSpeed;
     [SerializeField] private PlayerAnimation playerAnimation;
     
     private Vector3 inputDirection;
+    private Vector3 combatTargetDirection;
     private Vector3 targetDirection;
     private float currentMovementSpeed;
 
-    public void LookAt(Vector3 dir)
+    public void SetCombat(Vector3 dir)
     {
-        dir = Vector3.Scale(dir, new(1, 0, 1));
-        targetDirection = dir;
-        transform.rotation = Quaternion.LookRotation(dir) * new Quaternion(0, 1, 0, 1);
-        transform.eulerAngles -= new Vector3(0.0f, 90.0f, 0.0f);
+        dir = Vector3.Scale(dir, new(1, 0, 1)).normalized;
+        combatTargetDirection = dir;
+        currentCombatState = CombatState.Combat;
+    }
+
+    public void DisableCombat()
+    {
+        currentCombatState = CombatState.Passive;
     }
     
     protected override void FrameTick()
@@ -132,16 +138,32 @@ public class PlayerMovement : BaseMovement
 
     protected override void Rotate()
     {
-        if (currentMovementState == MovementState.Idle) return;
+        switch (currentCombatState)
+        {
+            case CombatState.Passive:
+                if (currentMovementState == MovementState.Idle) return;
         
-        targetDirection = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
-        targetDirection = Vector3.Scale(targetDirection, new(1.0f, 0.0f, 1.0f));
+                targetDirection = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
+                targetDirection = Vector3.Scale(targetDirection, new(1.0f, 0.0f, 1.0f));
+                RotateTo(targetDirection, rotationSpeed);
+                break;
+            
+            case CombatState.Combat:
+                
+                RotateTo(combatTargetDirection, combatRotationSpeed);
+                break;
+        }
         
+        
+    }
+
+    private void RotateTo(Vector3 targetDir, float rotSpeed)
+    {
         var cRot = myRb.rotation;
-        var targetRot = Quaternion.LookRotation(targetDirection);
+        var targetRot = Quaternion.LookRotation(targetDir);
         targetRot.eulerAngles -= new Vector3(0.0f, 90.0f, 0.0f);
         targetRot *= new Quaternion(0, 1, 0, 1);
-        myRb.rotation = Quaternion.Lerp(cRot, targetRot, Time.fixedDeltaTime / rotationSpeed);
+        myRb.rotation = Quaternion.Lerp(cRot, targetRot, Time.fixedDeltaTime / rotSpeed);
     }
 
     private void OnDrawGizmos()
