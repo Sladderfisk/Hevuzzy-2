@@ -12,6 +12,7 @@ public class HitScanWeapon : WeaponBase
     private HitScanWeaponScriptableObject hitWep;
     
     private Vector3 fireDir;
+    private bool firedThisFrame;
 
     private void Awake()
     {
@@ -25,11 +26,22 @@ public class HitScanWeapon : WeaponBase
         animator.SetBool(Cases.Shooting.ToString(), active);
         if (!active) vfx.Stop();
     }
+    
+    protected override void SetActive()
+    {
+        
+    }
+
+    protected override void LateFrameTick()
+    {
+        if (timeSinceLastAttack > timeToDeactivate) active = false;
+    }
 
     public override bool Fire()
     {
         if (!base.Fire()) return false;
 
+        active = true;
         HitScan();
         vfx.Play();
         

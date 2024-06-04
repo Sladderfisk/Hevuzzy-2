@@ -34,6 +34,24 @@ public class CanPause : MonoBehaviour
     {
         
     }
+
+    private void LateUpdate()
+    {
+        switch (currentGameState)
+        {
+            case GameState.Active:
+                LateFrameTick();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// LateUpdate that can be paused
+    /// </summary>
+    protected virtual void LateFrameTick()
+    {
+        
+    }
     
     private void FixedUpdate()
     {

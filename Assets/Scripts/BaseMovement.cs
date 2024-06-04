@@ -8,6 +8,7 @@ public class BaseMovement : CanPause
     [SerializeField] protected MovementTemplate idle; 
     [SerializeField] protected MovementTemplate walking; 
     [SerializeField] protected MovementTemplate running;
+    [SerializeField] protected MovementTemplate strafing;
     [Space] 
     [SerializeField] protected JumpTemplate idleJump;
     [SerializeField] protected JumpTemplate runJump;
@@ -100,6 +101,10 @@ public class BaseMovement : CanPause
             case MovementState.Running:
                 Running();
                 break;
+            
+            case MovementState.Strafing:
+                Strafing();
+                break;
         }
     }
     
@@ -122,6 +127,11 @@ public class BaseMovement : CanPause
     protected virtual void Running()
     {
         velocity = transform.forward * running.speed;
+    }
+
+    protected virtual void Strafing()
+    {
+        
     }
 
     protected virtual void Jump()
@@ -181,7 +191,7 @@ public class BaseMovement : CanPause
     {
         Gizmos.color = hitGround ? Color.green : Color.red;
         var pos = transform.position;
-        //pos -= new Vector3(0.0f, groundCheckLenght, 0.0f);
+
         Gizmos.DrawWireCube(transform.position + Vector3.down * groundCheckLenght,
             new(groundCheckRadius, groundCheckRadius, groundCheckRadius));
     }
@@ -197,6 +207,7 @@ public class BaseMovement : CanPause
         Idle,
         Walking,
         Running,
+        Strafing
     }
 
     public enum JumpingState

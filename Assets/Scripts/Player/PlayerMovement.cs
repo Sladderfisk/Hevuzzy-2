@@ -8,6 +8,7 @@ public class PlayerMovement : BaseMovement
 {
     [SerializeField] private float combatRotationSpeed;
     [SerializeField] private PlayerAnimation playerAnimation;
+    [SerializeField] private PlayerCamera cam;
     
     private Vector3 inputDirection;
     private Vector3 combatTargetDirection;
@@ -16,6 +17,8 @@ public class PlayerMovement : BaseMovement
 
     public void SetCombat(Vector3 dir)
     {
+        cam.SwitchState(CombatState.Combat);
+        
         dir = Vector3.Scale(dir, new(1, 0, 1)).normalized;
         combatTargetDirection = dir;
         currentCombatState = CombatState.Combat;
@@ -23,6 +26,8 @@ public class PlayerMovement : BaseMovement
 
     public void DisableCombat()
     {
+        cam.SwitchState(CombatState.Passive);
+
         currentCombatState = CombatState.Passive;
     }
     
@@ -75,6 +80,11 @@ public class PlayerMovement : BaseMovement
                     case MovementState.Running:
                         playerAnimation.SetBool(PlayerAnimation.States.Running, true);
                         break;
+                    
+                    case MovementState.Strafing:
+                        playerAnimation.SetBool(PlayerAnimation.States.Running, false);
+                        playerAnimation.SetBool(PlayerAnimation.States.Walking, true);
+                        break;
                 }
                 break;
         }
@@ -87,6 +97,8 @@ public class PlayerMovement : BaseMovement
         {
             if (Input.GetKey(KeyCode.LeftShift)) currentMovementState = MovementState.Running;
             else currentMovementState = MovementState.Walking;
+
+            if (currentCombatState == CombatState.Combat) currentMovementState = MovementState.Strafing;
         }
 
         SetJumpState();
@@ -95,6 +107,7 @@ public class PlayerMovement : BaseMovement
     private void SetJumpState()
     {
         if (currentJumpingState != JumpingState.Grounded) return;
+        if (currentMovementState == MovementState.Strafing) return;
 
         if (!Input.GetKeyDown(KeyCode.Space)) return;
         switch (currentMovementState)
@@ -131,6 +144,13 @@ public class PlayerMovement : BaseMovement
         velocity = forward * currentMovementSpeed;
     }
 
+    protected override void Strafing()
+    {
+        currentMovementSpeed = Accelerate(currentMovementSpeed, strafing);
+        var strafeDir = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
+        velocity = strafeDir * currentMovementSpeed;
+    }
+
     private float Accelerate(float val, MovementTemplate mov)
     {
         return Mathf.Lerp(val, mov.speed, Time.fixedDeltaTime / mov.accelerationSpeed);
@@ -153,8 +173,6 @@ public class PlayerMovement : BaseMovement
                 RotateTo(combatTargetDirection, combatRotationSpeed);
                 break;
         }
-        
-        
     }
 
     private void RotateTo(Vector3 targetDir, float rotSpeed)

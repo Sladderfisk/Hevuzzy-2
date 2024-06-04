@@ -51,7 +51,11 @@ public class WeaponBase : CanPause
 	protected override void FrameTick()
 	{
 		timeSinceLastAttack += Time.deltaTime;
+		SetActive();
+	}
 
+	protected virtual void SetActive()
+	{
 		active = timeToDeactivate > timeSinceLastAttack;
 	}
 
