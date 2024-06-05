@@ -29,6 +29,11 @@ public class WeaponBase : CanPause
 		return true;
 	}
 
+	public virtual void Rotate()
+	{
+		
+	}
+
 	protected bool CanFire()
 	{
 		bool val = timeSinceLastAttack > wep.timeBetweenAttacks;

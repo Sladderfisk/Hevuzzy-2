@@ -42,6 +42,8 @@ public class PlayerMovement : BaseMovement
 
         SetState();
         PlayAnimation();
+        
+        if (currentCombatState == CombatState.Combat) Rotate();
     }
 
     private void PlayAnimation()

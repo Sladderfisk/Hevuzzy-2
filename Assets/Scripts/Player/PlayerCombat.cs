@@ -5,11 +5,13 @@ using UnityEngine;
 public class PlayerCombat : BaseCombat
 {
     private PlayerMovement movement;
+    private PlayerCamera playerCam;
 
     protected override void Awake()
     {
         base.Awake();
-        
+
+        playerCam = FindObjectOfType<PlayerCamera>();
         movement = GetComponent<PlayerMovement>();
     }
     
@@ -18,6 +20,7 @@ public class PlayerCombat : BaseCombat
         base.FrameTick();
         
         ChangeWeaponInput();
+        CurrentWeapon.Rotate();
 
         if (CurrentWeapon.Weapon.canHoldDown)
         {
@@ -28,6 +31,12 @@ public class PlayerCombat : BaseCombat
         if (!CurrentWeapon.Active) movement.DisableCombat();
         else movement.SetCombat(Camera.main.transform.forward);
 
+    }
+
+    public override Vector3 GetFireDirection()
+    {
+        var camDir = playerCam.GetDirectionToCenter();
+        return camDir;
     }
 
     protected override bool Attack()

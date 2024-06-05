@@ -15,12 +15,19 @@ public class PlayerCamera : CanPause
     [SerializeField] private Vector3 startOffset;
     [SerializeField] private Vector3 combatOffset;
 
+    private Camera cam;
+    
     private BaseMovement.CombatState curState;
     private bool isSwitching;
     
     private void Awake()
     {
         LockCursor();
+    }
+
+    private void Start()
+    {
+        cam = Camera.main;
     }
 
     public void SwitchState(BaseMovement.CombatState state)
@@ -47,6 +54,13 @@ public class PlayerCamera : CanPause
         }
 
         isSwitching = false;
+    }
+
+    public Vector3 GetDirectionToCenter()
+    {
+        var ray = cam.ScreenPointToRay(new Vector3(cam.pixelWidth, cam.pixelHeight, 0) / 2);
+        var didHit = Physics.Raycast(ray, out var hit);
+        return didHit ? hit.point : ray.direction * 10000;
     }
 
     public static void LockCursor()

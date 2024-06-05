@@ -15,7 +15,7 @@ public abstract class BaseCombat : CanPause
 
     public WeaponBase CurrentWeapon => currentWeapon;
 
-    public Vector3 GetFireDirection()
+    public virtual Vector3 GetFireDirection()
     {
         return transform.forward;
     }
@@ -47,5 +47,12 @@ public abstract class BaseCombat : CanPause
         currentWeapon.SetMyCombat(this);
         
         currentWeapon.gameObject.SetActive(true);
+    }
+
+    public bool FoundMyself(BaseDamageable hit)
+    {
+        if (!BaseDamageable.AllDamageable.ContainsKey(gameObject.GetInstanceID())) return false;
+
+        return gameObject.GetInstanceID() == hit.gameObject.GetInstanceID();
     }
 }
