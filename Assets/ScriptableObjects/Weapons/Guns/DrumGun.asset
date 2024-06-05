@@ -16,5 +16,7 @@ MonoBehaviour:
   timeBetweenAttacks: 0.1
   canHoldDown: 1
   canCharge: 0
-  spread: 1
-  maxDistance: 1000
+  clipSize: 0
+  recoil: 0
+  spread: 0
+  maxDistance: 9999
