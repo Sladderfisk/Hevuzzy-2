@@ -82,14 +82,11 @@ public class MeleeWeapon : WeaponBase
     {
         foreach (var col in damageColliders)
         {
-            //Collider[] hits = new Collider[] {};
             var hits = new List<Collider>();
             foreach (var info in damageCollidersInfo)
             {
                 hits.AddRange(info.CollidersInMe);
             }
-            var hitCount = hits.Count;
-
             var damageableHits = SearchForDamageable(hits);
 
             foreach (var hit in damageableHits)

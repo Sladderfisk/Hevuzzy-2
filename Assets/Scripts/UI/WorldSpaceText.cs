@@ -53,9 +53,9 @@ public class WorldSpaceText : CanPause
     /// <returns>Id is the index position of the instantiated WorldText in the worldTexts list.</returns>
     public int Instantiate(Vector3 pos, float lifeTime = Mathf.Infinity, float movementSpeed = 0)
     {
-        if (activeTexts.Count < 1) return -1;
-
+        if (inActiveTexts.Count < 1) return -1;
         var worldText = inActiveTexts[0];
+        worldText.gameObject.SetActive(true);
         worldText.gameObject.transform.position = pos;
         worldText.lifeTime = lifeTime;
         worldText.movementSpeed = movementSpeed;
@@ -69,11 +69,11 @@ public class WorldSpaceText : CanPause
     /// <summary>
     /// This functions assumes that you have checked if Id is -1!
     /// </summary>
-    /// <param name="Id"></param>
+    /// <param name="id"></param>
     /// <param name="newText"></param>
-    public void ChangeText(int Id, string newText)
+    public void ChangeText(int id, string newText)
     {
-        worldTexts[Id].text.text = newText;
+        worldTexts[id].text.text = newText;
     }
 
     /// <summary>
@@ -82,19 +82,21 @@ public class WorldSpaceText : CanPause
     /// <param name="text"></param>
     public void DestroyText(WorldText text)
     {
+        text.gameObject.SetActive(false);
         activeTexts.Remove(text);
         inActiveTexts.Add(text);
     }
 
     protected override void FrameTick()
     {
-        foreach (var worldText in activeTexts)
+        var currentActiveTexts = activeTexts.ToArray();
+        foreach (var worldText in currentActiveTexts)
         {
             if (worldText.Update(Time.deltaTime)) DestroyText(worldText);
         }
     }
 
-    public struct WorldText
+    public class WorldText
     {
         public readonly TextMeshProUGUI text;
         public readonly GameObject gameObject;

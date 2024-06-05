@@ -8,10 +8,9 @@ public class EnemyDamageable : BaseDamageable
     
     public override void TakeHit(HitInfo hitInfo)
     {
-        worldSpaceText.Instantiate(transform.position, 0.5f, 3);
-        Debug.Log("Hit " + hitInfo.damage);
+        int text = worldSpaceText.Instantiate(transform.position, 0.5f, 3);
+        if (text > -1)worldSpaceText.ChangeText(text, hitInfo.damage.ToString());
 
         base.TakeHit(hitInfo);
-
     }
 }
