@@ -164,35 +164,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  ignoreLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  impactVfx: {fileID: 2653488219798935405, guid: 41f176bbc1c7ee24b9cf59705e2da68e,
+    type: 3}
   explosionRadius: 5
-  explosionForce: 100
+  explosionForce: 500
   damageFalloff:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: -1
-      outSlope: -1
-      tangentMode: 34
+      inSlope: -0.019745551
+      outSlope: -0.019745551
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
+      outWeight: 0.35833332
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: -1
-      outSlope: -1
-      tangentMode: 34
+      inSlope: -3.0593188
+      outSlope: -3.0593188
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.039810777
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  sfx: {fileID: 2830381722799525767, guid: 72ada85b6ed68644ba66fa7e90c612e4, type: 3}
 --- !u!54 &4193954802963993717
 Rigidbody:
   m_ObjectHideFlags: 0

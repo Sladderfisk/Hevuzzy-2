@@ -102,10 +102,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wep: {fileID: 11400000, guid: a0736e10ad0bee843833523cdd990e95, type: 2}
-  timeToDeactivate: 0
+  timeToDeactivate: 0.7
   startAmmo: 0
   firePoint: {fileID: 1901954130614875817}
-  animator: {fileID: 0}
+  animator: {fileID: 5882086731519401023}
   vfx: {fileID: 598744398760740920}
   temp: {fileID: 0}
   totalCachedProjectiles: 50

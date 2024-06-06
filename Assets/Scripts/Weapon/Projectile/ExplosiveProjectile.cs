@@ -7,6 +7,7 @@ public class ExplosiveProjectile : BaseProjectile
     [SerializeField] private float explosionRadius;
     [SerializeField] private float explosionForce;
     [SerializeField] private AnimationCurve damageFalloff;
+    [SerializeField] private SFX sfx;
 
     protected override void OnHit(Collider other)
     {
@@ -15,7 +16,7 @@ public class ExplosiveProjectile : BaseProjectile
         foreach (var hit in hits)
         {
             var myPos = transform.position;
-            var otherPos = other.transform.position;
+            var otherPos = hit.transform.position;
             var distance = Vector3.Distance(myPos, otherPos);
             var dir = (otherPos - myPos).normalized;
 
@@ -26,7 +27,9 @@ public class ExplosiveProjectile : BaseProjectile
                 Damage(BaseDamageable.AllDamageable[hit.gameObject.GetInstanceID()], falloff);
         }
 
-        Debug.Log("OvO");
+        var sfxObject = Instantiate(sfx, transform.position, Quaternion.identity);
+        sfxObject.DestroyAfterPlay();
+        
         Destroy(gameObject);
     }
 

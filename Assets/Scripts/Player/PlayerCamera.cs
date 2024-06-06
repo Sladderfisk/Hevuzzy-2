@@ -9,6 +9,7 @@ public class PlayerCamera : CanPause
 {
     [SerializeField] private CinemachineFreeLook cin;
     [SerializeField] private CinemachineCameraOffset offset;
+    [SerializeField] private LayerMask ignoreLayer;
 
     [SerializeField] private float switchTime;
 
@@ -59,7 +60,8 @@ public class PlayerCamera : CanPause
     public Vector3 GetDirectionToCenter()
     {
         var ray = cam.ScreenPointToRay(new Vector3(cam.pixelWidth, cam.pixelHeight, 0) / 2);
-        var didHit = Physics.Raycast(ray, out var hit);
+        var didHit = Physics.Raycast(ray, out var hit, Mathf.Infinity, ~ignoreLayer);
+        
         return didHit ? hit.point : ray.direction * 10000;
     }
 

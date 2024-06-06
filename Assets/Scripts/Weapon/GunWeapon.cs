@@ -8,9 +8,8 @@ public class GunWeapon : WeaponBase
     [SerializeField] protected Transform firePoint;
     [SerializeField] protected Animator animator;
     [SerializeField] protected VFX vfx;
+    [SerializeField] protected SFX sfx;
 
-    [SerializeField] protected GameObject temp;
-    
     protected GunWeaponScriptableObject gun;
 
     protected Quaternion startRot;
@@ -29,6 +28,7 @@ public class GunWeapon : WeaponBase
     {
         base.FrameTick();
         fireDir = (myCombat.GetFireDirection() - firePoint.position).normalized;
+        
         animator.SetBool(Cases.Shooting.ToString(), active);
         if (!active) vfx.Stop();
     }
@@ -73,11 +73,7 @@ public class GunWeapon : WeaponBase
 
     public override void Rotate()
     {
-        if (!active) transform.localRotation = startRot;
-        else
-        {
-            transform.rotation = Quaternion.LookRotation(fireDir) * new Quaternion(0.0f, -1.0f, 0.0f, 1.0f);
-        }
+        transform.rotation = Quaternion.LookRotation(fireDir);
     }
 
     private void OnDrawGizmos()

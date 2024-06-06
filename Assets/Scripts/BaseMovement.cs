@@ -15,6 +15,7 @@ public class BaseMovement : CanPause
     [SerializeField] protected MovementTemplate fallSpeed;
     [Space] 
     [SerializeField] protected float rotationSpeed;
+    [SerializeField] protected float combatRotationSpeed;
     [Space]
     [SerializeField] private float groundCheckLenght;
     [SerializeField] private float groundCheckRadius;
@@ -27,7 +28,12 @@ public class BaseMovement : CanPause
     protected RaycastHit groundHitInfo;
     protected bool hitGround;
     protected Vector3 forward;
+    protected Vector3 strafeDir;
     
+    protected Vector3 targetDirection;
+    protected Vector3 combatTargetDirection;
+
+    protected float currentMovementSpeed;
     protected float velocityY;
     protected Vector3 velocity;
 
@@ -47,6 +53,12 @@ public class BaseMovement : CanPause
     {
         get => currentJumpingState;
         set => currentJumpingState = value;
+    }
+
+    public CombatState CurrentCombatState
+    {
+        get => currentCombatState;
+        set => currentCombatState = value;
     }
 
     protected virtual void Awake()
@@ -110,34 +122,60 @@ public class BaseMovement : CanPause
     
     protected virtual void Rotate()
     {
-        
+        switch (currentCombatState)
+        {
+            case CombatState.Passive:
+                if (currentMovementState == MovementState.Idle) return;
+                RotateTo(targetDirection, rotationSpeed);
+                break;
+            
+            case CombatState.Combat:
+                
+                RotateTo(combatTargetDirection, combatRotationSpeed);
+                break;
+        }
+    }
+    
+    protected void RotateTo(Vector3 targetDir, float rotSpeed)
+    {
+        var cRot = myRb.rotation;
+        var targetRot = Quaternion.LookRotation(targetDir);
+        targetRot.eulerAngles -= new Vector3(0.0f, 90.0f, 0.0f);
+        targetRot *= new Quaternion(0, 1, 0, 1);
+        myRb.rotation = Quaternion.Lerp(cRot, targetRot, Time.fixedDeltaTime / rotSpeed);
     }
     
     protected virtual void Idle()
     {
-        velocity = transform.forward * idle.speed;
+        currentMovementSpeed = Accelerate(currentMovementSpeed, idle);
+        velocity = forward * currentMovementSpeed;
     }
-    
+
     protected virtual void Walking()
     {
-        
-        velocity = transform.forward * walking.speed;
+        currentMovementSpeed = Accelerate(currentMovementSpeed, walking);
+        velocity = forward * currentMovementSpeed;
     }
 
     protected virtual void Running()
     {
-        velocity = transform.forward * running.speed;
+        currentMovementSpeed = Accelerate(currentMovementSpeed, running);
+        velocity = forward * currentMovementSpeed;
     }
 
     protected virtual void Strafing()
     {
-        
+        currentMovementSpeed = Accelerate(currentMovementSpeed, strafing);
+        velocity = strafeDir * currentMovementSpeed;
+    }
+
+    private float Accelerate(float val, MovementTemplate mov)
+    {
+        return Mathf.Lerp(val, mov.speed, Time.fixedDeltaTime / mov.accelerationSpeed);
     }
 
     protected virtual void Jump()
     {
-        //if (hitGround) currentJumpingState = JumpingState.Grounded;
-
         switch (currentJumpingState)
         {
             case JumpingState.Air:
@@ -187,12 +225,12 @@ public class BaseMovement : CanPause
         }
     }
 
-    private void OnDrawGizmosSelected()
+    protected virtual void OnDrawGizmosSelected()
     {
         Gizmos.color = hitGround ? Color.green : Color.red;
         var pos = transform.position;
 
-        Gizmos.DrawWireCube(transform.position + Vector3.down * groundCheckLenght,
+        Gizmos.DrawWireCube(pos + Vector3.down * groundCheckLenght,
             new(groundCheckRadius, groundCheckRadius, groundCheckRadius));
     }
 

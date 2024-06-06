@@ -14,7 +14,7 @@ public abstract class BaseDamageable : CanPause
 
     public static Dictionary<int, BaseDamageable> AllDamageable { get; private set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         currentHealth = health;
         
@@ -29,13 +29,15 @@ public abstract class BaseDamageable : CanPause
 
     public virtual void TakeHit(HitInfo hitInfo)
     {
-        if (!invincible) currentHealth -= hitInfo.damage;
+        if (invincible) return;
+        
+        currentHealth -= hitInfo.damage;
         if (currentHealth < 1) Die();
     }
 
     protected virtual void Die()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
 

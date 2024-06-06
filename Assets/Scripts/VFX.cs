@@ -7,6 +7,7 @@ using UnityEngine.VFX;
 public class VFX : MonoBehaviour
 {
     [SerializeField] private VisualEffect vfx;
+    [SerializeField] private float playDuration;
 
     private void Awake()
     {
@@ -17,6 +18,18 @@ public class VFX : MonoBehaviour
     {
         vfx.gameObject.SetActive(true);
         vfx.Play();
+    }
+
+    public void PlayOnce()
+    {
+        StartCoroutine(Playing());
+    }
+
+    private IEnumerator Playing()
+    {
+        Play();
+        yield return new WaitForSeconds(playDuration);
+        Stop();
     }
 
     public void Stop()

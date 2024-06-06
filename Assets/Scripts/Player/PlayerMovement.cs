@@ -6,14 +6,10 @@ using UnityEngine;
 
 public class PlayerMovement : BaseMovement
 {
-    [SerializeField] private float combatRotationSpeed;
     [SerializeField] private PlayerAnimation playerAnimation;
     [SerializeField] private PlayerCamera cam;
     
     private Vector3 inputDirection;
-    private Vector3 combatTargetDirection;
-    private Vector3 targetDirection;
-    private float currentMovementSpeed;
 
     public void SetCombat(Vector3 dir)
     {
@@ -128,63 +124,21 @@ public class PlayerMovement : BaseMovement
         }
     }
 
-    protected override void Idle()
-    {
-        currentMovementSpeed = Accelerate(currentMovementSpeed, idle);
-        velocity = forward * currentMovementSpeed;
-    }
-
-    protected override void Walking()
-    {
-        currentMovementSpeed = Accelerate(currentMovementSpeed, walking);
-        velocity = forward * currentMovementSpeed;
-    }
-
-    protected override void Running()
-    {
-        currentMovementSpeed = Accelerate(currentMovementSpeed, running);
-        velocity = forward * currentMovementSpeed;
-    }
-
     protected override void Strafing()
     {
-        currentMovementSpeed = Accelerate(currentMovementSpeed, strafing);
-        var strafeDir = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
-        velocity = strafeDir * currentMovementSpeed;
-    }
-
-    private float Accelerate(float val, MovementTemplate mov)
-    {
-        return Mathf.Lerp(val, mov.speed, Time.fixedDeltaTime / mov.accelerationSpeed);
+        strafeDir = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
+        base.Strafing();
     }
 
     protected override void Rotate()
     {
-        switch (currentCombatState)
-        {
-            case CombatState.Passive:
-                if (currentMovementState == MovementState.Idle) return;
+        targetDirection = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
+        targetDirection = Vector3.Scale(targetDirection, new(1.0f, 0.0f, 1.0f));
         
-                targetDirection = mCamera.transform.forward * inputDirection.z + mCamera.transform.right * inputDirection.x;
-                targetDirection = Vector3.Scale(targetDirection, new(1.0f, 0.0f, 1.0f));
-                RotateTo(targetDirection, rotationSpeed);
-                break;
-            
-            case CombatState.Combat:
-                
-                RotateTo(combatTargetDirection, combatRotationSpeed);
-                break;
-        }
+        base.Rotate();
     }
 
-    private void RotateTo(Vector3 targetDir, float rotSpeed)
-    {
-        var cRot = myRb.rotation;
-        var targetRot = Quaternion.LookRotation(targetDir);
-        targetRot.eulerAngles -= new Vector3(0.0f, 90.0f, 0.0f);
-        targetRot *= new Quaternion(0, 1, 0, 1);
-        myRb.rotation = Quaternion.Lerp(cRot, targetRot, Time.fixedDeltaTime / rotSpeed);
-    }
+    
 
     private void OnDrawGizmos()
     {

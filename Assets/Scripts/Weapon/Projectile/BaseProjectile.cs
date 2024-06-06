@@ -6,7 +6,7 @@ using UnityEngine;
 public class BaseProjectile : CanPause
 {
     [SerializeField] private float speed;
-    [SerializeField] private LayerMask ignoreLayer;
+    [SerializeField] private VFX impactVfx;
 
     protected Rigidbody myRb;
     
@@ -34,12 +34,11 @@ public class BaseProjectile : CanPause
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collided");
         if (myHitInfo.shooter.gameObject == other.gameObject) return;
-        Debug.Log("NotSame");
-        if (Utils.CompareLayer(ignoreLayer, other.gameObject.layer)) return;
-        Debug.Log("Layer");
         
+        var vfxObject = Instantiate(impactVfx, transform.position, Quaternion.identity);
+        vfxObject.PlayOnce();
+
         OnHit(other);
     }
 
