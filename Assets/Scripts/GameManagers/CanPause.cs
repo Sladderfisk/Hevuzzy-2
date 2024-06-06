@@ -5,7 +5,13 @@ using UnityEngine;
 
 public class CanPause : MonoBehaviour
 {
-    private GameState currentGameState = GameState.Active;
+    private static GameState currentGameState = GameState.Active;
+
+    public static GameState CurrentGameState
+    {
+        get => currentGameState;
+        set => currentGameState = value;
+    }
 
     private void Update()
     {
